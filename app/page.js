@@ -77,8 +77,8 @@ const EditTodo = (id) => {
         todos.map((todo,index)=>{
           return <div className="mb-3" key={index}>
                   <Todo title={todo.title} description={todo.description} status={todo.status}/>
-                  <button className='flex h-8 w-28 bg-red-800 items-center justify-center rounded-md' onClick={()=>{handleDelete(todo._id)}}>Delete Todo</button>
-                  <button className='flex h-8 w-28 bg-yellow-800 items-center justify-center rounded-md' onClick={()=>editFunction(todo._id)}>Edit Todo</button>
+                  <button className='flex h-8 w-28 bg-red-800 items-center justify-center rounded-md ml-3' onClick={()=>{handleDelete(todo._id)}}>Delete Todo</button>
+                  <button className='flex h-8 w-28 bg-yellow-800 items-center justify-center rounded-md ml-3' onClick={()=>editFunction(todo._id)}>Edit Todo</button>
                   <div className="border-1 mt-0.5"></div>
             </div>
         })
