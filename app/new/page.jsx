@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 const AddTodoPage = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({
@@ -31,7 +32,7 @@ const AddTodoPage = () => {
 
     const data = await res.json();
     console.log("Added:", data);
-    alert("Todo added!");
+    toast.success("Todo added successfully.")
 
     // Optional: reset form
     setFormData({ title: "", description: "", status: false });

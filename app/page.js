@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Navbar from "./components/Navbar";
 import Todo from "./components/Todo";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export default function Home() {
   const router = useRouter(); 
@@ -43,6 +44,7 @@ export default function Home() {
     if (res.ok) {
       // re-fetch todos after successful deletion
       getAllTodo(); // ✅ this updates the UI
+      toast.success("Todo deleted successfully.")
     } else {
       console.error("Failed to delete todo");
     }

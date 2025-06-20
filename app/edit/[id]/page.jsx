@@ -1,65 +1,72 @@
 "use client"
 
-import React from 'react'
-import { useState,useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
+import { useParams,useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
-const page = ({params}) => {
-      const { id } = params;
-      console.log("id in edit page",id);
-      const [formData,setFormData] = useState(null);
 
-     useEffect(() => {
-      const fetchTodo = async () => {
-        const res = await fetch(`/api/todos/${id}`);
-        if(res.ok){
-          console.log("res",res);
+const Page = () => {
+  const { id } = useParams(); 
+  const [formData, setFormData] = useState(null);
+  const router = useRouter(); 
+
+  useEffect(() => {
+    const fetchTodo = async () => {
+      try {
+        const res = await fetch(`/api/todos/${id}`); 
+        if (res.ok) {
+          const data = await res.json();
+          setFormData(data);
+        } else {
+          console.log("No proper response");
         }
-        else{
-          console.log("no proper response ");
-        }
-        const data = await res.json();
-        setFormData(data);
-      };
+      } catch (err) {
+        console.log("Error fetching todo", err);
+      }
+    };
 
-      fetchTodo();
-    }, [id]);
+    if (id) fetchTodo(); // ✅ Ensure id is defined before fetching
+  }, [id]);
 
-    if (!formData) return <p>Loading...</p>;
+  if (!formData) return <p>Loading...</p>;
 
-    const handleChange = (e) =>{
-        e.preventDefault();
-        const {name,value,type,checked} = e.target;
-        setFormData((prev)=>({
-            ...prev,
-            [name]:type ==="checkbox" ?checked:value
-        }));
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // ✅ Needed to prevent page reload
+    try {
+      const res = await fetch(`/api/todos/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (res.ok) {
+        toast.success("Todo Updated Successfully");
+        router.push("/");
+        console.log("Edited");
+      } else {
+        toast.error("Failed to update");
+        console.log("Error occurred");
+      }
+    } catch (error) {
+      toast.error("Error occurred in updating todo.");
+      console.log("Error in handleSubmit", error);
     }
+  };
 
-    const handleSubmit = async() =>{
-        try{
-                const res = await fetch(`/api/todos/${id}`,{
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData),
-                });
-                if(res.ok){
-                    console.log("Edited");
-                }
-                else{
-                    console.log("Error occured");
-                }
-        }
-        catch(error){
-            console.log("Error in handleSubmit",error);
-        }
-       
-    }
   return (
     <div>
-      <h1>Edit Todo.</h1>
-       <form onSubmit={handleSubmit} className="space-y-4">
+      <h1>Edit Todo</h1>
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block text-sm font-medium">Title</label>
           <input
@@ -102,7 +109,7 @@ const page = ({params}) => {
         </button>
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default page
+export default Page;
